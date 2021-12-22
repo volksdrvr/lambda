@@ -1,6 +1,7 @@
 import boto3, os, re, logging, datetime, xlsxwriter
 from collections import defaultdict
 from botocore.exceptions import ClientError
+import pandas as pd
 
 region_name = AWS_REGION = 'us-west-2'
 AWS_REGIONS = ['us-west-2']
@@ -104,7 +105,7 @@ def elbv2_listener_spreadsheet_dict(region_name):
     # listener_return = defaultdict(lambda: defaultdict(dict))
     listener_return = {}
     listener_return[count] = {}
-    listener_return[count] = {'tg_arn': 'some_arn'}
+    listener_return[count] = {'tg_arn': 'Target Group ARN'}
     count += 1
 
     vpc = defaultdict()
@@ -278,6 +279,70 @@ def elbv2_listener_spreadsheet_dict(region_name):
     return listener_return
             
 
+def try200(region_name):
+     # print('hello world!')
+    dict_line_number = 0
+    count = 0
+
+    # listener_return = defaultdict(lambda: defaultdict(dict))
+    listener_return = {}
+    listener_return[count] = {}
+    listener_return[count] = {'tg_arn': 'Target Group ARN'}
+    count += 1
+
+    vpc = defaultdict()
+    vpc = get_vpc_region(region_name)
+    # print('vpc: {0}' .format(str(vpc)))
+    # print('len(vpc): {0}\n' .format(len(vpc)))
+
+    lb = defaultdict()
+    lb = get_lb_elbv2_region(region_name)
+    # print('lb: {0}' .format(str(lb)))
+    # print('len(lb): {0}\n' .format(len(lb)))
+
+    
+    lb_dict = defaultdict()
+    listener_dict = defaultdict()
+    tg_dict = defaultdict()
+    for key in lb['LoadBalancers']:
+        print(key)
+        for l_key, l_value in key.items():
+            print('l_key: {0}\nl_value: {1}'.format(l_key, l_value))
+            if 'State' in key:
+                print("key['State']['Code']: {0}" .format(str(key['State']['Code'])))
+                continue
+            else:
+                y = 1
+
+
+
+    # for key, value in lb['LoadBalancers'][0].items():
+    #     print('key: {0}\nvalue: {1}'.format(key, value))
+        
+    #     if 'LoadBalancerArn' in str(key):
+            # listener_count = 0
+            # listeners = defaultdict()
+            # listeners = get_listeners_elbv2_region(region_name, value)
+            # for l_key, l_values in listeners['Listeners'][0].items():
+            #     print('l_key: {0}\nl_values: {1}'.format(l_key, l_values))
+            #     if 'DefaultActions' in str(l_key) and 'TargetGroupArn' in str(l_values) :
+            #         tg_arn = l_values[0]['TargetGroupArn']
+            #         tg = defaultdict()
+            #         tg = get_tg_elb2_region(region_name, tg_arn)
+            #         for t_key, t_values in tg['TargetGroups'][0].items():
+            #             print('t_key: {0}\nt_values: {1}'.format(t_key, t_values))
+            #             listener_return[count] = {t_key: t_values}
+            #     else:
+            #         lb_dict[listener_count] = {l_key: l_values}
+            #         listener_count += 1
+            # count += 1
+            # print(str(lb_dict))
+
+    # return listener_return                  
+
+
+
+
             
 
 
@@ -319,21 +384,45 @@ def elbv2_listener_spreadsheet_dict(region_name):
 # test = get_az_region(region_name)
 # print ('test: {0}' .format(test))
 # test_out = defaultdict()
-test_out = elbv2_listener_spreadsheet_dict(region_name)
+# 
 
-print('test_out: {0}' .format(str(test_out)))
 
-workbook = xlsxwriter.Workbook('hello.xlsx')
-worksheet = workbook.add_worksheet()
-worksheet.write('A1', 'Hello world')
 
-for key, value in test_out.items():
-    print('key: {0}' .format(str(key)))
-    print('value: {0}' .format(str(value)))
-    # for x in value.info():
-    #     print('x: {0}' .format(str(x)))
 
-workbook.close()
+
+foo = try200(region_name)
+print('foo:\n' + str(foo))
+
+
+
+
+
+
+# print('test_out: {0}' .format(str(test_out)))
+
+# workbook = xlsxwriter.Workbook('hello.xlsx')
+# worksheet = workbook.add_worksheet()
+
+# header_format = workbook.add_format({
+#     'bold': True,
+#     'text_wrap': True,
+#     'valign': 'top',
+#     'fg_color': '#D7E4BC',
+#     'border': 1})
+# # worksheet.write('A1', 'Hello worldwasdx')
+# df = pd.DataFrame(data=test_out, index=[0])
+# df = (df.T)
+# print (df)
+# df.to_excel('dict1.xlsx')
+# workbook.close()
+
+# for key, value in test_out.items():
+#     print('key: {0}' .format(str(key)))
+#     print('value: {0}' .format(str(value)))
+# #     # for x in value.info():
+# #     #     print('x: {0}' .format(str(x)))
+
+# workbook.close()
 
 # for key, value in test_out:
 #     print('key: {0}\nvalue' .format(str(key), str(value)))
